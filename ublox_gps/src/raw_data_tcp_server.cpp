@@ -68,7 +68,10 @@ void RawDataStreamServer::initialize(void) {
 void RawDataStreamServer::ubloxCallback(const unsigned char *data, const std::size_t size) {
     if(p_socket_) {
         try {
-            boost::asio::write(*p_socket_, boost::asio::buffer(data, size));
+            auto written = boost::asio::write(*p_socket_, boost::asio::buffer(data, size));
+            if(written != size) {
+                ROS_WARN("Not all bytes have been written to TCP stream.");
+            }
         } catch (std::exception &e) {
             ROS_WARN("Error during stream write, closing connection");
             p_socket_->close();
