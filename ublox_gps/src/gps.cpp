@@ -575,26 +575,35 @@ bool Gps::sendRtcm(const std::vector<uint8_t>& rtcm){
 
 bool Gps::sendWheelTicks(uint32_t timestamp, uint32_t ticks_left, bool direction_left, uint32_t ticks_right, bool direction_right){
     if (!worker_) return false;
-    ublox_msgs::EsfMEAS message;
-    message.timeTag = timestamp;
+
+    /*
+     * Generate the byte array manually, we can't use the ublox_msgs::EsfMEAS because it will include the optional
+     * group which cannot be sent if calibTtagValid == 0
+     */
+    uint32_t payload[4] = {0};
+    payload[0] = timestamp;
+    // flags etc, it's all 0
+    payload[1] = 0;
+
+
     uint32_t data_left = ticks_left & (EsfMEAS::DATA_FIELD_MASK>>1);
     if(direction_left) {
         data_left |= 1<<23;
     }
     data_left |= EsfMEAS::DATA_TYPE_WHEEL_TICKS_REAR_LEFT << EsfMEAS::DATA_TYPE_SHIFT;
-    message.data.push_back(data_left);
+    payload[2] = data_left;
 
     uint32_t data_right = ticks_right & (EsfMEAS::DATA_FIELD_MASK>>1);
     if(direction_right) {
         data_right |= 1<<23;
     }
     data_right |= EsfMEAS::DATA_TYPE_WHEEL_TICKS_REAR_RIGHT << EsfMEAS::DATA_TYPE_SHIFT;
-    message.data.push_back(data_right);
+    payload[3] = data_right;
 
 
     std::vector<unsigned char> out(kWriterSize);
     ublox::Writer writer(out.data(), out.size());
-    if(!writer.write(message, message.CLASS_ID, message.MESSAGE_ID))
+    if(!writer.write(reinterpret_cast<uint8_t *>(payload), 4*4,EsfMEAS::CLASS_ID, EsfMEAS::MESSAGE_ID))
         return false;
 
     worker_->send(out.data(), writer.end() - out.data());
