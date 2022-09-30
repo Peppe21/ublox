@@ -1,0 +1,5 @@
+time stamp
+uint32 wheelTicksLeft
+uint32 wheelTicksRight
+bool directionLeft
+bool directionRight

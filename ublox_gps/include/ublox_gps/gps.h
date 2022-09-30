@@ -130,6 +130,11 @@ class Gps {
   bool sendRtcm(const std::vector<uint8_t> &message);
 
   /**
+   * @brief Send wheel ticks to the F9R board.
+   */
+   bool sendWheelTicks(uint32_t timestamp, uint32_t ticks_left, bool direction_left, uint32_t ticks_right, bool direction_right);
+
+  /**
    * @brief Closes the I/O port, and initiates save on shutdown procedure
    * if enabled.
    */

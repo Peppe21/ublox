@@ -573,6 +573,35 @@ bool Gps::sendRtcm(const std::vector<uint8_t>& rtcm){
   return true;
 }
 
+bool Gps::sendWheelTicks(uint32_t timestamp, uint32_t ticks_left, bool direction_left, uint32_t ticks_right, bool direction_right){
+    if (!worker_) return false;
+    ublox_msgs::EsfMEAS message;
+    message.timeTag = timestamp;
+    uint32_t data_left = ticks_left & (EsfMEAS::DATA_FIELD_MASK>>1);
+    if(direction_left) {
+        data_left |= 1<<23;
+    }
+    data_left |= EsfMEAS::DATA_TYPE_WHEEL_TICKS_REAR_LEFT << EsfMEAS::DATA_TYPE_SHIFT;
+    message.data.push_back(data_left);
+
+    uint32_t data_right = ticks_right & (EsfMEAS::DATA_FIELD_MASK>>1);
+    if(direction_right) {
+        data_right |= 1<<23;
+    }
+    data_right |= EsfMEAS::DATA_TYPE_WHEEL_TICKS_REAR_RIGHT << EsfMEAS::DATA_TYPE_SHIFT;
+    message.data.push_back(data_right);
+
+
+    std::vector<unsigned char> out(kWriterSize);
+    ublox::Writer writer(out.data(), out.size());
+    if(!writer.write(message, message.CLASS_ID, message.MESSAGE_ID))
+        return false;
+
+    worker_->send(out.data(), writer.end() - out.data());
+
+    return true;
+}
+
 bool Gps::poll(uint8_t class_id, uint8_t message_id,
                const std::vector<uint8_t>& payload) {
   if (!worker_) return false;
