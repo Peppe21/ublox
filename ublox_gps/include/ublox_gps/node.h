@@ -58,6 +58,7 @@
 #include <ublox_gps/gps.h>
 #include <ublox_gps/utils.h>
 #include <ublox_gps/raw_data_pa.h>
+#include <ublox_gps/raw_data_server.h>
 
 #include <rtcm_msgs/Message.h>
 
@@ -123,7 +124,8 @@ int fix_status_service;
 uint16_t meas_rate;
 //! Navigation rate in measurement cycles, see CfgRate.msg
 uint16_t nav_rate;
-//! IDs of RTCM out messages to configure.
+//! IDs of RTCM out messages to c
+//! onfigure.
 std::vector<uint8_t> rtcm_ids;
 //! Rates of RTCM out messages. Size must be the same as rtcm_ids
 std::vector<uint8_t> rtcm_rates;
@@ -672,6 +674,10 @@ class UbloxNode : public virtual ComponentInterface {
 
   //! raw data stream logging
   RawDataStreamPa rawDataStreamPa_;
+
+  //! debug tcp server
+  RawDataStreamServer rawDataServer_;
+
 };
 
 /**

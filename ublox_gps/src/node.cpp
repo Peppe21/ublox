@@ -234,6 +234,7 @@ void UbloxNode::getRosParams() {
 
   // raw data stream logging
   rawDataStreamPa_.getRosParams();
+  rawDataServer_.getRosParams();
 }
 
 void UbloxNode::keepAlive(const ros::TimerEvent& event) {
@@ -567,6 +568,13 @@ void UbloxNode::initializeIo() {
     gps.setRawDataCallback(
       boost::bind(&RawDataStreamPa::ubloxCallback,&rawDataStreamPa_, _1, _2));
     rawDataStreamPa_.initialize();
+  }
+
+  // TCP server
+  if (rawDataServer_.isEnabled()) {
+    gps.setRawDataCallback(
+      boost::bind(&RawDataStreamServer::ubloxCallback,&rawDataServer_, _1, _2));
+    rawDataServer_.initialize();
   }
 }
 
