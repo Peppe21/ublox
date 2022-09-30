@@ -129,7 +129,8 @@ std::vector<uint8_t> rtcm_ids;
 std::vector<uint8_t> rtcm_rates;
 //! Flag for enabling configuration on startup
 bool config_on_startup_flag_;
-
+//! Keep track of the last time wheel_ticks were supplied so we can skip if it happens too often
+ros::Time last_wheel_tick_time(0.0);
 
 //! Topic diagnostics for u-blox messages
 struct UbloxTopicDiagnostic {
