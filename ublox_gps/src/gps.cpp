@@ -167,12 +167,6 @@ void Gps::initializeSerial(std::string port, unsigned int baudrate,
   } else {
     configured_ = true;
   }
-
-  if(this->setSfodoDisAutodirpinpol(1)) {
-      ROS_INFO_STREAM("VALSET SUCCESS");
-  } else {
-      ROS_INFO_STREAM("VALSET ERROR");
-  }
 }
 
 void Gps::resetSerial(std::string port) {
@@ -738,6 +732,11 @@ bool Gps::setTimtm2(uint8_t rate) {
 
     bool Gps::setSfodoDisAutodirpinpol(bool value) {
         return valSet(0x10070005, (uint8_t)value);
+    }
+
+    bool Gps::setSfodoFactor(double factor) {
+        uint32_t raw_factor = (uint32_t)(factor * 1000000.0);
+        return valSet(0x40070007, raw_factor);
     }
 
 

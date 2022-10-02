@@ -326,13 +326,21 @@ class Gps {
 
   /**
    * @brief Set CFG-SFODO-COMBINE_TICKS - Use combined rear wheel ticks instead of the single tick
+   * @return true on success
    */
    bool setSfodoCombineTicks(bool value);
 
    /**
     * @brief Set CFG-SFODO-DIS_AUTODIRPINPOL - Disable automatic wheel tick direction pin polarity detection
+    * @return true on success
     */
     bool setSfodoDisAutodirpinpol(bool value);
+
+    /**
+     * @brief Set CFG-SFODO-FACTOR - Wheel tick scale factor (Wheel tick scale factor to obtain distance [m] from wheel ticks.)
+     * @return true on success
+     */
+    bool setSfodoFactor(double factor);
 
   /**
    * @brief Enable or disable TIM-TM2 (time mark message).
