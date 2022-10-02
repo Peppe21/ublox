@@ -122,7 +122,7 @@ void Gps::initializeSerial(std::string port, unsigned int baudrate,
   }
 
   ROS_INFO("U-Blox: Opened serial port %s", port.c_str());
-    
+
   if(BOOST_VERSION < 106600)
   {
     // NOTE(Kartik): Set serial port to "raw" mode. This is done in Boost but
@@ -166,6 +166,12 @@ void Gps::initializeSerial(std::string port, unsigned int baudrate,
     }
   } else {
     configured_ = true;
+  }
+
+  if(this->setSfodoDisAutodirpinpol(1)) {
+      ROS_INFO_STREAM("VALSET SUCCESS");
+  } else {
+      ROS_INFO_STREAM("VALSET ERROR");
   }
 }
 
@@ -425,6 +431,8 @@ bool Gps::configRate(uint16_t meas_rate, uint16_t nav_rate) {
   return configure(rate);
 }
 
+
+
 bool Gps::configRtcm(std::vector<uint8_t> ids, std::vector<uint8_t> rates) {
   for(size_t i = 0; i < ids.size(); ++i) {
     ROS_DEBUG("Setting RTCM %d Rate %u", ids[i], rates[i]);
@@ -561,7 +569,7 @@ bool Gps::setUseAdr(bool enable, float protocol_version) {
 
   ublox_msgs::CfgNAVX5 msg;
   msg.useAdr = enable;
-  
+
   if(protocol_version >= 18)
     msg.version = 2;
   msg.mask2 = ublox_msgs::CfgNAVX5::MASK2_ADR;
@@ -663,7 +671,74 @@ bool Gps::setTimtm2(uint8_t rate) {
   ublox_msgs::CfgMSG msg;
   msg.msgClass = ublox_msgs::TimTM2::CLASS_ID;
   msg.msgID = ublox_msgs::TimTM2::MESSAGE_ID;
-  msg.rate  = rate; 
+  msg.rate  = rate;
   return configure(msg);
 }
+
+    bool Gps::valSet(uint32_t key_id, uint32_t value) {
+        uint32_t payload[3];
+        // set in RAM only
+        payload[0] = 0x0100;
+        payload[1] = key_id;
+        payload[2] = value;
+
+        if (!worker_) return false;
+
+        // Reset ack
+        Ack ack;
+        ack.type = WAIT;
+        ack_.store(ack, boost::memory_order_seq_cst);
+
+        // Encode the message
+        std::vector<unsigned char> out(kWriterSize);
+        ublox::Writer writer(out.data(), out.size());
+        if (!writer.write(reinterpret_cast<uint8_t*>(payload),sizeof(payload), 0x06, 0x8a)) {
+            ROS_ERROR("Failed to encode config message 0x06 / 0x8a (VALSET)");
+            return false;
+        }
+        // Send the message to the device
+        worker_->send(out.data(), writer.end() - out.data());
+
+        // Wait for an acknowledgment and return whether or not it was received
+        return waitForAcknowledge(default_timeout_,
+                                  0x06, 0x8a);
+    }
+    bool Gps::valSet(uint32_t key_id, uint8_t value) {
+        uint32_t payload[3];
+        // set in RAM only
+        payload[0] = 0x0100;
+        payload[1] = key_id;
+        payload[2] = value;
+
+        if (!worker_) return false;
+
+        // Reset ack
+        Ack ack;
+        ack.type = WAIT;
+        ack_.store(ack, boost::memory_order_seq_cst);
+
+        // Encode the message
+        std::vector<unsigned char> out(kWriterSize);
+        ublox::Writer writer(out.data(), out.size());
+        if (!writer.write(reinterpret_cast<uint8_t*>(payload),9, 0x06, 0x8a)) {
+            ROS_ERROR("Failed to encode config message 0x06 / 0x8a (VALSET)");
+            return false;
+        }
+        // Send the message to the device
+        worker_->send(out.data(), writer.end() - out.data());
+
+        // Wait for an acknowledgment and return whether or not it was received
+        return waitForAcknowledge(default_timeout_,
+                                  0x06, 0x8a);
+    }
+
+    bool Gps::setSfodoCombineTicks(bool value) {
+        return valSet(0x10070001, (uint8_t)value);
+    }
+
+    bool Gps::setSfodoDisAutodirpinpol(bool value) {
+        return valSet(0x10070005, (uint8_t)value);
+    }
+
+
 }  // namespace ublox_gps

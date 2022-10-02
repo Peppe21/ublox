@@ -63,6 +63,10 @@ uint8_t ublox_node::modelFromString(const std::string& model) {
     return ublox_msgs::CfgNAV5::DYN_MODEL_WRIST_WATCH;
   } else if(lower == "bike") {
     return ublox_msgs::CfgNAV5::DYN_MODEL_BIKE;
+  } else if(lower == "mower") {
+    return ublox_msgs::CfgNAV5::DYN_MODEL_MOWER;
+  } else if(lower == "escooter") {
+    return ublox_msgs::CfgNAV5::DYN_MODEL_ESCOOTER;
   }
 
   throw std::runtime_error("Invalid settings: " + lower +

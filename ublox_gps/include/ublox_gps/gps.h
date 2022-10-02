@@ -325,6 +325,16 @@ class Gps {
   bool setUTCtime();
 
   /**
+   * @brief Set CFG-SFODO-COMBINE_TICKS - Use combined rear wheel ticks instead of the single tick
+   */
+   bool setSfodoCombineTicks(bool value);
+
+   /**
+    * @brief Set CFG-SFODO-DIS_AUTODIRPINPOL - Disable automatic wheel tick direction pin polarity detection
+    */
+    bool setSfodoDisAutodirpinpol(bool value);
+
+  /**
    * @brief Enable or disable TIM-TM2 (time mark message).
    * @param enable If true, enable TIM-TM2.
    * @return true on ACK, false on other conditions.
@@ -411,6 +421,15 @@ class Gps {
    */
   template <typename ConfigT>
   bool configure(const ConfigT& message, bool wait = true);
+
+  /**
+   * @brief set a value using valset
+   * @param key_id the key ID to set
+   * @param value the value to set
+   * @return true, if there was an ACK
+   */
+   bool valSet(uint32_t key_id, uint32_t value);
+   bool valSet(uint32_t key_id, uint8_t value);
 
   /**
    * @brief Wait for an acknowledge message until the timeout
