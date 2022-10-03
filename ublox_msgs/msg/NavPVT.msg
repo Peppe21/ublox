@@ -85,7 +85,8 @@ uint32 headAcc          # Heading Accuracy Estimate (both motion & vehicle)
                         # [deg / 1e-5]
 
 uint16 pDOP             # Position DOP [1 / 0.01]
-uint8[6] reserved1      # Reserved
+uint16 flags3
+uint8[4] reserved1      # Reserved
 
 int32 headVeh           # Heading of vehicle (2-D) [deg / 1e-5]
 int16 magDec            # Magnetic declination [deg / 1e-2]
