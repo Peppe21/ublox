@@ -1924,7 +1924,7 @@ int main(int argc, char** argv) {
   ros::init(argc, argv, "ublox_gps");
   nh.reset(new ros::NodeHandle("~"));
   ros::Subscriber subRtcm = nh->subscribe("/rtcm", 10, rtcmCallback);
-  ros::Subscriber subWheelTicks = nh->subscribe("wheel_ticks", 10, wheelTicksCallback);
+  ros::Subscriber subWheelTicks = nh->subscribe("wheel_ticks", 10, wheelTicksCallback, ros::TransportHints().tcpNoDelay(true));
   nh->param("debug", ublox_gps::debug, 1);
   if(ublox_gps::debug) {
     if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME,
