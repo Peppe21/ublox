@@ -161,7 +161,7 @@ void RawDataOutputDumper::saveToFile(const std::string str) {
     if (file_handle_.is_open()) {
         try {
             file_handle_ << str;
-            // file_handle_.flush();
+             file_handle_.flush();
         } catch(const std::exception& e) {
             ROS_WARN("Error writing to file \"%s\"", file_name_.c_str());
         }

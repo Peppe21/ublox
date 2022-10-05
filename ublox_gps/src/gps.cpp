@@ -651,6 +651,15 @@ void Gps::setRawDataCallback(const Worker::Callback& callback) {
   if (! worker_) return;
   worker_->setRawDataCallback(callback);
 }
+void Gps::setRawDataCallback2(const Worker::Callback& callback) {
+  if (! worker_) return;
+  worker_->setRawDataCallback2(callback);
+}
+
+void Gps::setOutputRawDataCallback(const Worker::Callback& callback) {
+  if (! worker_) return;
+  worker_->setOutputRawDataCallback(callback);
+}
 
 bool Gps::setUTCtime() {
   ROS_DEBUG("Setting time to UTC time");

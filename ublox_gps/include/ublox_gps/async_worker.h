@@ -77,6 +77,12 @@ class AsyncWorker : public Worker {
   void setRawDataCallback(const Callback& callback) { write_callback_ = callback; }
 
   /**
+   * @brief Set the callback function which handles raw data.
+   * @param callback the write callback which handles raw data
+   */
+  void setRawDataCallback2(const Callback& callback) { write_callback2_ = callback; }
+
+  /**
    * @brief Set the callback function which handles the output raw data.
    * @param callback the write callback which handles output raw data
    */
@@ -136,6 +142,7 @@ class AsyncWorker : public Worker {
                                                        //!< service
   Callback read_callback_; //!< Callback function to handle received messages
   Callback write_callback_; //!< Callback function to handle raw data
+  Callback write_callback2_; //!< Callback function to handle raw data
   Callback output_write_callback_; //!< Callback function to handle output raw data
 
   bool stopping_; //!< Whether or not the I/O service is closed
@@ -193,6 +200,10 @@ void AsyncWorker<StreamT>::doWrite() {
   }
   // Write all the data in the out buffer
   boost::asio::write(*stream_, boost::asio::buffer(out_.data(), out_.size()));
+
+    size_t size = out_.size();
+    if (output_write_callback_)
+        output_write_callback_(static_cast<unsigned char*>(out_.data()), size);
 
   if (debug >= 2) {
     // Print the data that was sent
@@ -270,6 +281,9 @@ void AsyncWorker<StreamT>::readEnd(const boost::system::error_code& error,
 
     if (write_callback_)
       write_callback_(pRawDataStart, raw_data_stream_size);
+    if (write_callback2_)
+      write_callback2_(pRawDataStart, raw_data_stream_size);
+
 
     if (debug >= 4) {
       std::ostringstream oss;
