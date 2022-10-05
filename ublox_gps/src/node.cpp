@@ -238,6 +238,7 @@ void UbloxNode::getRosParams() {
 
   // raw data stream logging
   rawDataStreamPa_.getRosParams();
+  rawDataOutputDumper_.getRosParams();
   rawDataServer_.getRosParams();
 }
 
@@ -572,6 +573,10 @@ void UbloxNode::initializeIo() {
     gps.setRawDataCallback(
       boost::bind(&RawDataStreamPa::ubloxCallback,&rawDataStreamPa_, _1, _2));
     rawDataStreamPa_.initialize();
+  }
+
+  if(rawDataOutputDumper_.isEnabled()) {
+      rawDataOutputDumper_.initialize();
   }
 
   // TCP server
@@ -1918,6 +1923,7 @@ void wheelTicksCallback(const ublox_msgs::WheelTicks::ConstPtr &msg) {
         return;
     last_wheel_tick_time = msg->stamp;
     gps.sendWheelTicks(static_cast<uint32_t>(msg->stamp.toSec() * 1000.0), msg->wheelTicksLeft, msg->directionLeft, msg->wheelTicksRight, msg->directionRight);
+
 }
 
 int main(int argc, char** argv) {

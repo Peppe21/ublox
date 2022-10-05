@@ -77,6 +77,12 @@ class AsyncWorker : public Worker {
   void setRawDataCallback(const Callback& callback) { write_callback_ = callback; }
 
   /**
+   * @brief Set the callback function which handles the output raw data.
+   * @param callback the write callback which handles output raw data
+   */
+  void setOutputRawDataCallback(const Callback& callback) { output_write_callback_ = callback; }
+
+  /**
    * @brief Send the data bytes via the I/O stream.
    * @param data the buffer of data bytes to send
    * @param size the size of the buffer
@@ -130,6 +136,7 @@ class AsyncWorker : public Worker {
                                                        //!< service
   Callback read_callback_; //!< Callback function to handle received messages
   Callback write_callback_; //!< Callback function to handle raw data
+  Callback output_write_callback_; //!< Callback function to handle output raw data
 
   bool stopping_; //!< Whether or not the I/O service is closed
 };
@@ -208,6 +215,10 @@ inline void AsyncWorker<boost::asio::ip::udp::socket>::doWrite() {
   }
   // Write all the data in the out buffer
   stream_->send(boost::asio::buffer(out_.data(), out_.size()));
+
+  size_t size = out_.size();
+  if (output_write_callback_)
+    output_write_callback_(static_cast<unsigned char*>(out_.data()), size);
 
   if (debug >= 2) {
     // Print the data that was sent

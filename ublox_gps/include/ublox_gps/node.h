@@ -58,6 +58,7 @@
 #include <ublox_gps/gps.h>
 #include <ublox_gps/utils.h>
 #include <ublox_gps/raw_data_pa.h>
+#include <ublox_gps/raw_data_output_dumper.h>
 #include <ublox_gps/raw_data_server.h>
 
 #include <rtcm_msgs/Message.h>
@@ -674,6 +675,7 @@ class UbloxNode : public virtual ComponentInterface {
 
   //! raw data stream logging
   RawDataStreamPa rawDataStreamPa_;
+  RawDataOutputDumper rawDataOutputDumper_;
 
   //! debug tcp server
   RawDataStreamServer rawDataServer_;
