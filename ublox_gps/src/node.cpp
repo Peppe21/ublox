@@ -1933,7 +1933,8 @@ void wheelTicksCallback(const ublox_msgs::WheelTicks::ConstPtr &msg) {
     last_wheel_tick_time = ros::Time::now();
      */
 
-    gps.sendWheelTicks(static_cast<uint32_t>(msg->stamp.toSec() * 1000.0), msg->wheelTicksLeft, msg->directionLeft, msg->wheelTicksRight, msg->directionRight);
+
+    gps.sendWheelTicks(static_cast<uint32_t>(msg->stamp.toNSec() / 1000000), msg->wheelTicksLeft, msg->directionLeft, msg->wheelTicksRight, msg->directionRight);
 
 }
 
