@@ -1922,20 +1922,12 @@ void rtcmCallback(const rtcm_msgs::Message::ConstPtr &msg) {
 
 void wheelTicksCallback(const ublox_msgs::WheelTicks::ConstPtr &msg) {
     // Limit frequency
-    if(msg->stamp - last_wheel_tick_time< ros::Duration(0.1))
+    if(msg->stamp - last_wheel_tick_time< ros::Duration(0.9))
         return;
     last_wheel_tick_time = msg->stamp;
 
-    /*
-     // Limit frequency
-    if(ros::Time::now() - last_wheel_tick_time< ros::Duration(0.1))
-        return;
-    last_wheel_tick_time = ros::Time::now();
-     */
-
-
-    gps.sendWheelTicks(static_cast<uint32_t>(msg->stamp.toNSec() / 1000000), msg->wheelTicksLeft, msg->directionLeft, msg->wheelTicksRight, msg->directionRight);
-
+    // divide ticks by 10 or the F9R won't work.
+    gps.sendWheelTicks(static_cast<uint32_t>(msg->stamp.toNSec() / 1000000), msg->wheelTicksLeft/10, msg->directionLeft, msg->wheelTicksRight/10, msg->directionRight);
 }
 
 int main(int argc, char** argv) {
