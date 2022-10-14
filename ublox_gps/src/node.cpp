@@ -1922,7 +1922,7 @@ void rtcmCallback(const rtcm_msgs::Message::ConstPtr &msg) {
 
 void wheelTicksCallback(const ublox_msgs::WheelTicks::ConstPtr &msg) {
     // Limit frequency
-    if(msg->stamp - last_wheel_tick_time< ros::Duration(0.9))
+    if(msg->stamp - last_wheel_tick_time< ros::Duration(0.09))
         return;
     last_wheel_tick_time = msg->stamp;
 
