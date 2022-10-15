@@ -1,3 +1,7 @@
+# Archive Notice
+I have tried to extend the driver to support the F9R, but during testing I noticed that with the latency introduced by this driver, we can't rely on the high frequency navigation updates from the F9R. Please check my low latency ublox ros driver implementation here: https://github.com/ClemensElflein/xbot_driver_gps
+
+
 # ublox
 The `ublox` package provides support for [u-blox](http://www.u-blox.com) GPS receivers. Only the _serial_ configuration of the driver is documented here, but TCP/UDP communication is also supported by the driver (untested).
 
