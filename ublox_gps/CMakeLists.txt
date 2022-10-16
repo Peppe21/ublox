@@ -3,9 +3,9 @@ project(ublox_gps)
 find_package(catkin REQUIRED COMPONENTS
   tf
   roscpp
-  roscpp_serialization
-  ublox_msgs
+  roscpp_serialization  
   ublox_serialization
+  ublox_msgs
   diagnostic_updater
   rtcm_msgs
   nmea_msgs
@@ -14,7 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
-    CATKIN_DEPENDS tf roscpp ublox_msgs ublox_serialization rtcm_msgs nmea_msgs)
+    CATKIN_DEPENDS tf roscpp ublox_serialization ublox_msgs rtcm_msgs nmea_msgs)
 
 # include boost
 find_package(Boost REQUIRED COMPONENTS system regex thread)
